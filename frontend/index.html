@@ -1,0 +1,69 @@
+<html>
+  <head>
+    <title>Resumable</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="resumable/resumable.js"></script>
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+  </head>
+  <body>
+    <h1>Resumable Demo</h1>
+    <div id="uploader">
+      <input type="file" id="upload">
+    </div>
+    <div class="resumable-progress">
+      <div style="width:100%; height: 5px;" class="progress-container"><div class="progress-bar"></div></div>
+      <div class="progress-text" nowrap="nowrap"></div>
+      <div class="controller">
+        <a class="progress-resume-link"><img src="resume.png" title="Resume upload" /></a>
+        <a class="progress-pause-link"><img src="pause.png" title="Pause upload" /></a>
+        <a class="progress-cancel-link"><img src="cancel.png" title="Cancel upload" /></a>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  $(document).ready(function () {
+    console.log('it is ready for you!');
+
+    var r = new Resumable({
+      target:'/upload',
+      simultaneousUploads:4,
+      testChunks:false,
+      throttleProgressCallbacks:1
+    });
+
+    r.assignBrowse($('#upload'));
+
+    r.on('fileAdded', function(file, event){
+      console.log('file added');
+    });
+    r.on('fileSuccess', function(file, message){
+      console.log('fileSuccess');
+    });
+    r.on('fileError', function(file, message){
+      console.log('fileError');
+    });
+    r.on('fileProgress', function(file){
+      console.log('upload progress', r.progress());
+      $('.progress-bar').css({width:Math.floor(r.progress()*100) + '%'});
+    });
+
+    // handle action
+    $('.progress-resume-link').click(function () {
+      console.log('start upload');
+      r.upload();
+    });
+
+    $('.progress-pause-link').click(function () {
+      console.log('pause upload');
+      r.pause();
+    });
+
+    $('.progress-cancel-link').click(function () {
+      console.log('cancel upload');
+      r.cancel();
+    });
+
+  });
+</script>
