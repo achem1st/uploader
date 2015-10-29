@@ -9,6 +9,8 @@ var multipart = require('connect-multiparty');
 
 var app = express();
 
+var Joiner = require('./joiner');
+
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
@@ -26,7 +28,10 @@ app.post('/upload', function(req, res){
   // console.log(req);
 
     resumable.post(req, function(status, filename, original_filename, identifier){
-        console.log('POST', status, original_filename, identifier);
+        // console.log('POST', status, original_filename, identifier);
+        if (status == 'done') {
+            Joiner(filename, identifier);
+        }
 
         res.send(status, {
             // NOTE: Uncomment this funciton to enable cross-domain request.
